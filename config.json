@@ -1,0 +1,14 @@
+{
+  "development": {
+    "ts_cache_size_mb": 512,
+    "ts_cache_age_minutes": 1
+  },
+  "test": {
+    "ts_cache_size_mb": 512,
+    "ts_cache_age_minutes": 1
+  },
+  "production": {
+    "ts_cache_size_mb": 512,
+    "ts_cache_age_minutes": 1
+  }
+}

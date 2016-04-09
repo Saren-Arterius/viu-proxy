@@ -1,0 +1,25 @@
+{
+  "name": "viu-proxy",
+  "version": "1.0.0",
+  "description": "ViuTV proxy",
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "express": "~4.13.1",
+    "lru-cache": "^4.0.0",
+    "morgan": "^1.7.0",
+    "request": "^2.67.0"
+  },
+  "main": "app.js",
+  "author": "Saren",
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Saren-Arterius/viu-proxy.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Saren-Arterius/viu-proxy/issues"
+  },
+  "homepage": "https://github.com/Saren-Arterius/viu-proxy#readme"
+}
