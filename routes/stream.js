@@ -22,6 +22,7 @@ var m3u8Cache = LRU({
 var eventEmitters = {};
 
 var sendBuffer = function (res, buffer) {
+  res.setHeader('Cache-Control', 'public, max-age=14400');
   res.end(buffer);
 };
 
