@@ -26,7 +26,7 @@ var server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
-commons.waitForBaseFetched(function () {
+commons.updateSession(function () {
   server.listen(port);
   server.on('error', onError);
   server.on('listening', onListening);

@@ -13,6 +13,7 @@ var API_OPTIONS = {
 var _indexUrl;
 var _baseUrl;
 var _baseIndex;
+var _akamai = false;
 
 module.exports = {
   baseUrl: function () {
@@ -21,7 +22,11 @@ module.exports = {
   baseIndex: function () {
     return _baseIndex;
   },
-  waitForBaseFetched: function (cb) {
+  isAkamai: function () {
+    return _akamai;
+  },
+  updateSession: function (cb) {
+    var self = this;
     request.post(API_OPTIONS, function (err, resp, body) {
       if (err) throw err;
       _indexUrl = body.asset.hls.adaptive[0];
@@ -29,13 +34,11 @@ module.exports = {
       request(_indexUrl, function (err, resp, body) {
         if (err) throw err;
         _baseIndex = body;
+        _akamai = _indexUrl.indexOf('master.m3u8') !== -1;
+        if (_akamai) _baseUrl = _indexUrl.split('master.m3u8')[0];
         cb();
+        console.log('New baseUrl: ' + self.baseUrl());
       });
     });
-  },
-  updateSession: function (cb) {
-    console.log('Updating session...');
-    this.waitForBaseFetched(cb);
-    console.log('Done, new baseUrl: ' + this.baseUrl());
   }
 };

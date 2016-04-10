@@ -43,7 +43,7 @@ var handlePlaylist = function (req, res, next) {
     eventEmitters[key] = eventEmitter;
     eventEmitter.setMaxListeners(100000);
     var fulfill = function () {
-      request.get(commons.baseUrl() + req.params.streamName + '/index.m3u8', function (err, resp, body) {
+      request.get(commons.baseUrl() + req.params.streamName + (commons.isAkamai() ? '/streamPlaylist.m3u8' : '/index.m3u8'), function (err, resp, body) {
         if (resp.statusCode === 403) {
           return commons.updateSession(fulfill);
         }
@@ -73,7 +73,7 @@ var handlePlaylist = function (req, res, next) {
 };
 
 var handleTs = function (req, res, next) {
-  var key = req.params.streamName + '/' + req.params.segmentName;
+  var key = req.params.streamName + '/' + req.params.segmentName + '/' + req.params.fileName;
   var cachedTSBuffer = tsCache.get(key);
   if (cachedTSBuffer) {
     sendBuffer(res, cachedTSBuffer);
@@ -86,9 +86,10 @@ var handleTs = function (req, res, next) {
     eventEmitter.setMaxListeners(100000);
     var fulfill = function () {
       var options = {
-        url: commons.baseUrl() + key + '/segment.ts',
+        url: commons.baseUrl() + key + '.ts',
         encoding: null
       };
+      console.log(options.url);
       request.get(options, function (err, resp, body) {
         if (resp.statusCode === 403) {
           return commons.updateSession(fulfill);
@@ -118,7 +119,23 @@ var handleTs = function (req, res, next) {
   });
 };
 
+var mergeSegmentName = function (req, res, next) {
+  req.params.segmentName = req.params.path1 + '/' + req.params.path2 + '/' + req.params.path3; 
+  next();
+}
+
+var normalizeStreamName = function (req, res, next) {
+  if (commons.isAkamai()) {
+    req.params.streamName = req.params.streamName.replace('(', '').replace(')', '').replace('0', '').toLowerCase();
+  }
+  next();
+}
+
 router.get('/index.m3u8', handleIndex);
-router.get('/:streamName/index.m3u8', handlePlaylist);
-router.get('/:streamName/:segmentName/segment.ts', handleTs);
+router.get('/master.m3u8', handleIndex);
+router.get('/:streamName/index.m3u8', normalizeStreamName, handlePlaylist);
+router.get('/:streamName/streamPlaylist.m3u8', normalizeStreamName, handlePlaylist);
+router.get('/:streamName/:segmentName/:fileName.ts', normalizeStreamName, handleTs);
+router.get('/:streamName/:path1/:path2/:path3/:fileName.ts', normalizeStreamName, mergeSegmentName, handleTs);
+
 module.exports = router;
