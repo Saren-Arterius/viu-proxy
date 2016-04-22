@@ -1,7 +1,23 @@
-var express = require('express');
-var logger = require('morgan');
+var crossdomain = require('crossdomain'),
+    express = require('express'),
+    logger = require('morgan'),
+    cors = require('cors');
 
 var app = express();
+
+// CORS setting --start
+var xml = crossdomain({domain: '*'});
+app.use(cors());
+
+app.all('/crossdomain.xml', function (req, res, next) {
+  res.set('Content-Type', 'application/xml; charset=utf-8');
+  res.send(xml, 200);
+});
+
+app.use(function (req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  next();
+});
 
 app.use(logger('dev'));
 
