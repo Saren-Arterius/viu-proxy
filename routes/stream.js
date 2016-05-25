@@ -27,6 +27,7 @@ var sendBuffer = function (res, buffer) {
 };
 
 var handleIndex = function (req, res, next) {
+  res.set('Content-Type', 'application/x-mpegURL');
   res.send(commons.baseIndex());
 };
 
